@@ -1,8 +1,9 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
-// Change this to your deployed Veyra URL after the Vercel deploy:
-// e.g. "https://veyra-yourname.vercel.app"
-const VEYRA_SERVER_URL = process.env.VEYRA_SERVER_URL ?? "https://your-app.vercel.app";
+// Set the repository variable VEYRA_SERVER_URL (or this file) to your
+// deployed Veyra URL, e.g. "https://veyra.vercel.app".
+const VEYRA_SERVER_URL =
+  (process.env.VEYRA_SERVER_URL ?? "").trim() || "https://your-app.vercel.app";
 
 const config: CapacitorConfig = {
   appId: 'com.veyra.app',

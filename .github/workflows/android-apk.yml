@@ -32,6 +32,10 @@ jobs:
       - name: Sync Capacitor config
         run: npx cap sync android
         working-directory: android-wrapper
+        env:
+          # Set a repository variable named VEYRA_SERVER_URL to point the APK
+          # at your live site (e.g. https://veyra.vercel.app).
+          VEYRA_SERVER_URL: ${{ vars.VEYRA_SERVER_URL }}
 
       - name: Inject signing key (optional)
         working-directory: android-wrapper/android
