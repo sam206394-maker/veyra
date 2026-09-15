@@ -201,12 +201,67 @@ npx prisma generate  # Regenerate Prisma client
    > Connection pooling), you can also use that URL and then
    > `npx prisma migrate deploy` works normally.
 
-### Vercel (Recommended)
+### Vercel (Recommended — free)
 
-1. Push to GitHub
-2. Import in Vercel
-3. Set environment variables (including Supabase `DATABASE_URL` from above)
-4. Deploy
+1. Push to GitHub (this repo is already on GitHub)
+2. Go to [vercel.com](https://vercel.com) → sign up **with your GitHub account** (free Hobby plan, no card needed)
+3. Click **Add New → Project** → import `sam206394-maker/veyra`
+4. Framework auto-detects **Next.js** — keep the defaults
+5. Add environment variables (Vercel → Project → Settings → Environment Variables):
+   - `DATABASE_URL` = your Supabase connection string (same as in `.env`)
+   - `NEXT_PUBLIC_APP_URL` = `https://<your-project>.vercel.app` (the URL Vercel assigns you)
+   - `DEMO_MODE` = `true` (mock AI/payments until you add real keys)
+6. Click **Deploy** — done, you now have a **free live website at 0$**
+
+To update the app later: push to GitHub and Vercel auto-deploys. No commands needed.
+
+## Android APK (free)
+
+The app can also be installed as an Android APK — no Play Store, no $25, no fees.
+The wrapper (a Capacitor shell that opens your live Veyra URL) lives in `android-wrapper/`.
+
+### How the APK gets built
+
+A GitHub Action builds it for you for free on every push (public repos get unlimited CI minutes):
+
+1. Set your live URL in `android-wrapper/capacitor.config.ts`:
+   ```ts
+   const VEYRA_SERVER_URL = process.env.VEYRA_SERVER_URL ?? "https://<your-project>.vercel.app";
+   ```
+2. Push to GitHub → open the **Actions** tab → the **Build Android APK** workflow runs.
+3. When it finishes, open the run → **Artifacts** → download `veyra-apk`.
+
+### Share it with anyone
+
+Create a **GitHub Release** to get a permanent download link:
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+Wait for the workflow to finish, then open GitHub → **Releases** → `v1.0.0` — the APK is attached. Share that link. Friends install it by tapping the APK and allowing **"install unknown apps"** for their browser (a normal Play Protect warning appears — tap *Install anyway*). No store fees, no reviews.
+
+### Signing (optional but recommended)
+
+Without a private key, the APK is debug-signed: fine for personal use, but to replace
+an installed APK without uninstalling you need a stable key:
+
+```bash
+keytool -genkeypair -v -keystore keystore.jks -alias veyra -keyalg RSA -keysize 2048 -validity 10000
+```
+
+Then add GitHub secrets (Settings → Secrets and variables → Actions):
+- `VEYRA_KEYSTORE_BASE64` = `base64 -w0 keystore.jks` output
+- `VEYRA_KEYSTORE_PASSWORD`, `VEYRA_KEY_ALIAS`, `VEYRA_KEY_PASSWORD` = your values
+
+Keep those secrets safe — losing them means you can't update the app later without users uninstalling first.
+
+### Notes
+
+- Content updates are instant: the APK is a shell, so every change you push goes live without a new APK.
+- Android-only. iOS requires a paid Apple Developer account ($99/year) — not available on a 0$ budget.
+- If you ever have $25, the same app can be published on the Play Store later — nothing is wasted.
 
 ### Docker
 

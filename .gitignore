@@ -52,3 +52,12 @@ data/
 /.claude
 /.windsurf
 /skills-lock.json
+
+# Android wrapper build artifacts
+android-wrapper/node_modules/
+android-wrapper/android/.gradle/
+android-wrapper/android/app/build/
+android-wrapper/android/build/
+android-wrapper/android/local.properties
+android-wrapper/keystore.properties
+android-wrapper/keystore.jks
