@@ -3,7 +3,7 @@ name: Build Android APK
 on:
   push:
     branches: [master]
-    paths: ['android-wrapper/**']
+    paths: ['android-wrapper/**', '.github/workflows/android-apk.yml']
   workflow_dispatch:
 
 jobs:
