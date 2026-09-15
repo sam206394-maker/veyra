@@ -231,9 +231,18 @@ A GitHub Action builds it for you for free on every push (public repos get unlim
 2. Push to GitHub → open the **Actions** tab → the **Build Android APK** workflow runs.
 3. When it finishes, open the run → **Artifacts** → download `veyra-apk`.
 
+### 📦 Download the APK
+
+**Latest build (v1.0.0):** [Download Veyra-v1.0.0.apk](https://github.com/sam206394-maker/veyra/releases/download/v1.0.0/Veyra-v1.0.0.apk)
+
+Install it on Android: tap the download → allow **"install unknown apps"** for
+your browser when asked → open the APK → Install. The app is a shell that opens
+your live Veyra site, so it updates automatically whenever the site updates.
+
 ### Share it with anyone
 
-Create a **GitHub Release** to get a permanent download link:
+Create a **GitHub Release** to get a permanent download link (this is how
+`v1.0.0` above was published):
 
 ```bash
 git tag v1.0.0
