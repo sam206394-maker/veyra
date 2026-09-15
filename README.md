@@ -177,13 +177,26 @@ npx prisma generate  # Regenerate Prisma client
 
 ## Deployment
 
+### Supabase PostgreSQL Setup
+
+1. Create a free project at [supabase.com](https://supabase.com) → **New project**
+2. Go to **Project Settings → Database → Connection string → URI**
+3. Copy the **Transaction** mode connection string
+4. Set it in your environment:
+   ```
+   DATABASE_URL="postgresql://postgres.<ref>:<password>@aws-0-<region>.pooler.supabase.com:6543/postgres"
+   ```
+5. Apply the migration (included in this repo):
+   ```bash
+   npx prisma migrate deploy
+   ```
+
 ### Vercel (Recommended)
 
 1. Push to GitHub
 2. Import in Vercel
-3. Set environment variables
-4. Use PostgreSQL (Vercel Postgres, Supabase, or Neon)
-5. Deploy
+3. Set environment variables (including Supabase `DATABASE_URL` from above)
+4. Deploy
 
 ### Docker
 
