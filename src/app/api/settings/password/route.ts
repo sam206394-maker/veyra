@@ -20,6 +20,12 @@ export async function POST(request: NextRequest) {
   const user = await prisma.user.findUnique({ where: { id: session.id } });
   if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
+  if (!user.passwordHash) {
+    return NextResponse.json(
+      { error: "Your account has no password yet. Sign in with Google and add a password in Settings." },
+      { status: 400 }
+    );
+  }
   const valid = await bcrypt.compare(parsed.data.currentPassword, user.passwordHash);
   if (!valid) {
     return NextResponse.json({ error: "Current password is incorrect" }, { status: 400 });

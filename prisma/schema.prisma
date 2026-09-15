@@ -12,7 +12,10 @@ model User {
   id             String          @id @default(cuid())
   email          String          @unique
   name           String?
-  passwordHash   String
+  passwordHash   String?
+  phone          String?         @unique
+  phoneVerified  Boolean         @default(false)
+  googleId       String?         @unique
   role           String          @default("user")
   emailVerified  DateTime?
   avatar         String?
@@ -164,4 +167,18 @@ model Asset {
   @@index([userId])
   @@index([generationId])
   @@index([type])
+}
+
+model OtpCode {
+  id         String   @id @default(cuid())
+  identifier String
+  purpose    String
+  codeHash   String
+  expiresAt  DateTime
+  attempts   Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  @@index([identifier])
+  @@index([expiresAt])
+  @@index([purpose])
 }

@@ -117,3 +117,22 @@ export const adminDisableUserSchema = z
     userId: z.string().min(1),
   })
   .strict();
+
+export const googleAuthSchema = z
+  .object({
+    credential: z.string().min(10, "Invalid Google credential"),
+  })
+  .strict();
+
+export const phoneSendOtpSchema = z
+  .object({
+    phone: z.string().min(5, "Enter a valid phone number").max(20),
+  })
+  .strict();
+
+export const phoneVerifySchema = z
+  .object({
+    phone: z.string().min(5, "Enter a valid phone number").max(20),
+    code: z.string().regex(/^\d{6}$/, "Enter the 6-digit code"),
+  })
+  .strict();

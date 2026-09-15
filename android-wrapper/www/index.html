@@ -2,18 +2,105 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#09090b" />
     <title>Veyra</title>
     <style>
-      body { margin: 0; background: #0a0a0b; color: #fafafa; font-family: system-ui, sans-serif; display: grid; place-items: center; height: 100vh; }
-      div { text-align: center; }
-      p { opacity: 0.6; }
+      :root {
+        --bg: #09090b;
+        --fg: #fafafa;
+        --muted: #8b8b93;
+        --rose: #fb7185;
+        --amber: #f59e0b;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html, body { height: 100%; }
+      body {
+        background: var(--bg);
+        color: var(--fg);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", system-ui, sans-serif;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+      .bg-grid {
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+        background-size: 52px 52px;
+        -webkit-mask-image: radial-gradient(ellipse 70% 55% at 50% 35%, #000 40%, transparent 100%);
+        mask-image: radial-gradient(ellipse 70% 55% at 50% 35%, #000 40%, transparent 100%);
+      }
+      .orb {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(90px);
+        pointer-events: none;
+      }
+      .orb-a { width: 380px; height: 380px; top: -120px; left: -100px; background: rgba(225,29,72,0.18); animation: drift 14s ease-in-out infinite; }
+      .orb-b { width: 320px; height: 320px; bottom: -100px; right: -90px; background: rgba(245,158,11,0.1); animation: drift 18s ease-in-out infinite reverse; }
+      @keyframes drift {
+        0%, 100% { transform: translate3d(0,0,0); }
+        50% { transform: translate3d(24px,-20px,0); }
+      }
+      .stack { position: relative; text-align: center; padding: 0 28px; animation: rise 0.7s cubic-bezier(0.22,1,0.36,1) both; }
+      .logo {
+        font-size: 56px;
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        background: linear-gradient(120deg, var(--rose) 0%, var(--amber) 55%, var(--rose) 100%);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        animation: shimmer 5s ease-in-out infinite;
+      }
+      @keyframes shimmer {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+      }
+      .tagline { margin-top: 10px; font-size: 15px; letter-spacing: 0.06em; color: var(--muted); }
+      .ring {
+        width: 54px; height: 54px; margin: 44px auto 0;
+        border-radius: 50%;
+        border: 3px solid rgba(255,255,255,0.12);
+        border-top-color: var(--rose);
+        animation: spin 0.8s linear infinite;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      .status { margin-top: 18px; font-size: 13px; color: var(--muted); }
+      .hint {
+        position: fixed;
+        bottom: 26px; left: 24px; right: 24px;
+        text-align: center;
+        font-size: 12px;
+        line-height: 1.5;
+        color: rgba(139,139,147,0.75);
+        animation: fadeIn 1.2s 1s ease both;
+      }
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+      @media (prefers-reduced-motion: reduce) {
+        .orb, .logo, .ring, .stack, .hint { animation: none !important; }
+      }
     </style>
   </head>
   <body>
-    <div>
-      <h1>Veyra</h1>
-      <p>Loading…</p>
+    <div class="bg-grid"></div>
+    <div class="orb orb-a"></div>
+    <div class="orb orb-b"></div>
+    <div class="stack">
+      <div class="logo">Veyra</div>
+      <p class="tagline">CREATE WITHOUT LIMITS</p>
+      <div class="ring" role="status" aria-label="Loading"></div>
+      <p class="status">Connecting to Veyra…</p>
     </div>
+    <p class="hint">
+      If this stays stuck, the app server hasn't been connected yet.<br />
+      Open the website, sign in, and this screen will load instantly.
+    </p>
   </body>
 </html>

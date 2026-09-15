@@ -12,10 +12,13 @@ An affordable AI image and video creation platform. Built with Next.js, TypeScri
 npm install
 
 # Set up environment
-cp .env.example .env
+cp .env.example .env   # then put your DATABASE_URL / Supabase URL in .env
 
-# Initialize database
-npx prisma migrate dev
+# Generate the Prisma client
+npx prisma generate
+
+# Apply database migrations (works with IPv6-only Supabase hosts)
+npm run db:migrate
 
 # Start development server
 npm run dev
@@ -28,6 +31,24 @@ Open [http://localhost:3000](http://localhost:3000). The app runs fully in demo 
 - Node.js 18+
 - npm or pnpm
 - No external database needed for development (SQLite included)
+
+## Deploy for Free (Vercel — $0)
+
+The Android APK opens the deployed website in a WebView. "Stuck on loading" = the site isn't deployed yet. Fix that in ~5 minutes:
+
+1. Push this repo to GitHub (already done: `sam206394-maker/veyra`).
+2. Go to <https://vercel.com> → **Sign up with GitHub** (free, no card).
+3. **Add New Project** → import `veyra` → **Deploy** (defaults are fine).
+4. In Project → **Settings → Environment Variables**, add:
+   - `DATABASE_URL` — your Supabase URL (from `.env`)
+   - `NEXT_PUBLIC_APP_URL` — `https://<your-project>.vercel.app`
+   - `DEMO_MODE` — `true` (or `false` once you add real AI/payment keys)
+   - `NEXT_PUBLIC_DEMO_MODE` — `true` (shows the demo badge + demo Google button)
+   - `GOOGLE_CLIENT_ID` + `NEXT_PUBLIC_GOOGLE_CLIENT_ID` — optional, for real Google login
+5. **Redeploy**, open the URL, log in with email / Google / phone (demo OTP shown on screen).
+6. To point the Android app at your live site, set `VEYRA_SERVER_URL=https://<your-project>.vercel.app` and run the GitHub Actions APK build, or edit `android-wrapper/capacitor.config.ts` and push. The APK re-builds automatically via GitHub Actions.
+
+> No card required anywhere. Supabase free tier + Vercel Hobby + GitHub Actions = fully $0.
 
 ## Architecture
 
@@ -57,6 +78,28 @@ Set `DEMO_MODE=true` to run without any paid services:
 - Mock AI provider returns placeholder images/videos
 - Mock payment provider handles checkout flows
 - Local file storage for uploads
+- **Mock Google login** — one-click demo Google account
+- **Mock SMS OTP** — the 6-digit phone code is shown directly in the UI
+
+## Authentication
+
+Three sign-in methods are built in (email + Google + phone OTP):
+
+| Method | Status | How it works |
+| --- | --- | --- |
+| Email + password | ✅ Works | bcrypt-hashed passwords, secure httpOnly sessions |
+| Google | ✅ Works (demo) | One-click demo login out of the box. For real Google login set `NEXT_PUBLIC_GOOGLE_CLIENT_ID`. ID tokens are verified server-side against Google's JWKS (RS256). |
+| Phone OTP | ✅ Works (demo) | 6-digit code, hashed at rest with per-code salt, 10 min expiry, 5 attempt limit, rate-limited. Demo mode shows the code in the UI; real SMS adapters plug into the `SmsProvider` abstraction. |
+
+### Enable real Google login
+
+1. Create OAuth credentials at <https://console.cloud.google.com/apis/credentials> (Google Auth Platform → Clients → Web application).
+2. Add your authorized origins: `https://<your-project>.vercel.app` and `http://localhost:3000`.
+3. Copy the client ID into `NEXT_PUBLIC_GOOGLE_CLIENT_ID` (and `GOOGLE_CLIENT_ID`) in your env config, then redeploy.
+
+### Add a real SMS provider
+
+The `SmsProvider` interface in `src/providers/auth/` is the plug-in point. Replace `MockSmsProvider` with a Twilio/Termii/2Factor adapter — the API routes already do hash-at-rest, expiry, attempt limits, and rate limiting server-side.
 
 ### AI Provider
 
