@@ -48,7 +48,7 @@ describe("Payment Provider abstraction", () => {
 
   it("mock provider returns active subscription", async () => {
     const provider = new MockPaymentProvider();
-    const sub = await provider.getSubscription("sub_1");
+    const sub = await provider.getSubscription();
     expect(sub.status).toBe("active");
   });
 });

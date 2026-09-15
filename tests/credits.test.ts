@@ -21,6 +21,9 @@ vi.mock("@/lib/prisma", () => {
 
 import { prisma } from "@/lib/prisma";
 
+// Typed reference so TS sees the mock API ($transaction is overloaded in the real client)
+const mockTransaction = prisma.$transaction as unknown as ReturnType<typeof vi.fn>;
+
 describe("calculateCreditCost", () => {
   it("returns correct cost for text-to-image standard quality", () => {
     expect(calculateCreditCost("text-to-image", "standard")).toBe(2);
@@ -55,7 +58,7 @@ describe("deductCredits", () => {
   });
 
   it("fails when user has insufficient credits", async () => {
-    prisma.$transaction.mockImplementationOnce(async (cb) => {
+    mockTransaction.mockImplementationOnce(async (cb) => {
       const fakeTx = {
         user: {
           findUnique: vi.fn().mockResolvedValue({ id: "user1", credits: 5 }),
@@ -70,7 +73,7 @@ describe("deductCredits", () => {
   });
 
   it("deducts credits successfully when balance is sufficient", async () => {
-    prisma.$transaction.mockImplementationOnce(async (cb) => {
+    mockTransaction.mockImplementationOnce(async (cb) => {
       const fakeTx = {
         user: {
           findUnique: vi.fn().mockResolvedValue({ id: "user1", credits: 50 }),
@@ -99,7 +102,7 @@ describe("addCredits", () => {
   });
 
   it("adds credits successfully", async () => {
-    prisma.$transaction.mockImplementationOnce(async (cb) => {
+    mockTransaction.mockImplementationOnce(async (cb) => {
       const fakeTx = {
         user: {
           update: vi.fn().mockResolvedValue({}),

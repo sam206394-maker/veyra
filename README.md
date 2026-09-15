@@ -136,6 +136,7 @@ npm run dev          # Development server
 npm run build        # Production build
 npm run start        # Production server
 npm run lint         # ESLint
+npm run db:migrate   # Apply Prisma migrations via direct PG connection
 npx prisma studio    # Database browser
 npx prisma generate  # Regenerate Prisma client
 ```
@@ -181,15 +182,24 @@ npx prisma generate  # Regenerate Prisma client
 
 1. Create a free project at [supabase.com](https://supabase.com) → **New project**
 2. Go to **Project Settings → Database → Connection string → URI**
-3. Copy the **Transaction** mode connection string
-4. Set it in your environment:
+3. Copy the direct **PostgreSQL** connection string (port `5432`) into `.env`:
    ```
-   DATABASE_URL="postgresql://postgres.<ref>:<password>@aws-0-<region>.pooler.supabase.com:6543/postgres"
+   DATABASE_URL="postgresql://postgres:<password>@db.<ref>.supabase.co:5432/postgres?sslmode=require"
    ```
-5. Apply the migration (included in this repo):
+   Keep the password URL-encoded (`%` → `%25`, `/` → `%2F`).
+4. Apply the migration (included in this repo):
    ```bash
-   npx prisma migrate deploy
+   npm run db:migrate
    ```
+   > Why not `npx prisma migrate deploy`? Some Supabase direct hosts are
+   > **IPv6-only**, which the Prisma CLI cannot route to on machines without
+   > IPv6. `npm run db:migrate` runs the same migration SQL over a direct
+   > `pg` connection (with TLS) and records it in `_prisma_migrations`, so
+   > Prisma stays in sync. It works from anywhere — including Termux.
+   >
+   > If your project has a **pooler** hostname (Settings → Database →
+   > Connection pooling), you can also use that URL and then
+   > `npx prisma migrate deploy` works normally.
 
 ### Vercel (Recommended)
 
